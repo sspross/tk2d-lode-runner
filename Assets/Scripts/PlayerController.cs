@@ -21,7 +21,8 @@ public class PlayerController : MonoBehaviour {
 	private Transform shootParent;
 	private Renderer shootRenderer;
 	private tk2dSpriteAnimator shootSprite;
-
+	
+	private RaycastHit hit;
 
 	// Use this for initialization
 	void Start () {
@@ -52,6 +53,19 @@ public class PlayerController : MonoBehaviour {
 		// shooting
 		if (Input.GetKeyDown("space") && !onRope && !onLadder) {
 			StartCoroutine(Shoot());
+		}
+	}
+	
+	void UpdateRaycasts() { 
+		float correction = 45f;
+		if (!lookRight) {
+			correction = -10f;
+		}
+		Vector3 higherMe = new Vector3(transform.position.x+correction, transform.position.y+15f, transform.position.z);
+		if (Physics.Raycast(higherMe, Vector3.down, out hit, 30.0F)) {
+			if (hit.transform.tag == "brick") {
+				hit.transform.SendMessage("Break", SendMessageOptions.DontRequireReceiver);
+			}
 		}
 	}
 	
@@ -174,7 +188,9 @@ public class PlayerController : MonoBehaviour {
 			shootParent.localScale = new Vector3(1, 1,1); // left side
 		}
 		
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.35f);
+		UpdateRaycasts();
+		yield return new WaitForSeconds(0.15f);
 		shootRenderer.enabled = false;
 		isShooting = false;
 	}

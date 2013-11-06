@@ -9,7 +9,9 @@ public class GameController : MonoBehaviour {
 	public int gridHeight = 30;
 	public int gridSize = 30;
 	
-	public Transform solid, brick, ladder, player;
+	public Transform solid, brick, ladder, player, pickup, rope;
+	
+	public int pickups = 0;
 
 	void Start () {
     	try {
@@ -24,7 +26,7 @@ public class GameController : MonoBehaviour {
 			            sgr.Read(chars, 0, gridWidth);
 						int gridX = 0;
 			            foreach (char c in chars) {
-							CreateInstance(c, gridX * gridSize, gridY * gridSize);
+							CreateInstance(c, gridX, gridY);
 							gridX++;
 						}
         			}
@@ -37,20 +39,33 @@ public class GameController : MonoBehaviour {
 	}
 	
 	void CreateInstance(char c, int x, int y) {
-		switch (c) {
-		    case 'X':
+		x *= gridSize;
+		y *= gridSize;
+		switch (char.ToLower(c)) {
+		    case 'x':
 				Instantiate(solid, new Vector3(x, y, 0), Quaternion.identity);
 				break;
 			case '#':
 				Instantiate(brick, new Vector3(x, y, 0), Quaternion.identity);
 				break;
-			case 'H':
+			case 'h':
 				Instantiate(ladder, new Vector3(x, y, 0), Quaternion.identity);
 				break;
-			case 'P':
+			case '-':
+				Instantiate(rope, new Vector3(x, y, 0), Quaternion.identity);
+				break;
+			case 'o':
+				Instantiate(pickup, new Vector3(x, y, 0), Quaternion.identity);
+				pickups++;
+				break;
+			case 'p':
 				Instantiate(player, new Vector3(x, y, -1), Quaternion.identity);
 				break;
 		}	
+	}
+	
+	void PickedUp() {
+		pickups--;	
 	}
 	
 }

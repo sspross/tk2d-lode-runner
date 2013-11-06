@@ -1,21 +1,21 @@
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-X  P   o #       o       E             X
-X#########     ######H######           X
-X                    H                 X
-X                    H                 X
-X   ###################################X
-X   XXXXXXXXXXXXXXXXXXXXXXX############X
-X                          ############X
-X                          ####ooooooooX
-X               ------     ############X
-X                     #H               X
-X                      H               X
-XXXXXXXXXXX##XXXXXX    H               X
-X      o   ##   o      H               X
-X  XXXXXXXXXXXXXXX     H               X
-X                      H               X
-X                      H               X
-X##########################            X
+X  P   o #  X    o       E             X
+X#########  X  ######H######           X
+X           X        H                 X
+X           X        H       P         X
+X  H########X##########################X
+X  HXXXXXXXXX              ############X
+X  H        X              ############X
+X  H        XXXXXXXXXXXXXXX####ooooooooX
+X  H            ------    X############X
+X  H                  #H  X            X
+X  H                   H  X            X
+XXXXXXXXXXX##XXXXXX    H  X            X
+X      o   ##   o      H  X            X
+X  XXXXXXXXXXXXXXX     H  X            X
+X                      H  X            X
+X                      H  X            X
+XXXXXXXXXXXXXXXXXXXXXXXXXXX            X
 X                                      X
 X                                      X
 X                                      X

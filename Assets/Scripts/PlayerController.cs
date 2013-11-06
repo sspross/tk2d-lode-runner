@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour {
 	private float speed = 130F;
 	private float velocityX, velocityY = 0F;
 	private CharacterController characterController;
+	private GameController gameController;
 	private tk2dSpriteAnimator spriteController;
 	private Vector3 moveDirection = Vector3.zero;
 	
@@ -26,6 +27,7 @@ public class PlayerController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		gameController = GameObject.Find("GameController").GetComponent<GameController>();
 		characterController = GetComponent<CharacterController>();
 		spriteController = GetComponent<tk2dSpriteAnimator>();
 		shootParent = transform.Find("shoot parent");
@@ -151,6 +153,11 @@ public class PlayerController : MonoBehaviour {
 		{
 			ropeTriggerCount++;
 			onRope = true;
+		}
+		if(other.gameObject.CompareTag("pickup"))
+		{
+			gameController.SendMessage("PickedUp", SendMessageOptions.DontRequireReceiver);
+			other.gameObject.renderer.enabled = false;	
 		}
 
 	}

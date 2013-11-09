@@ -3,26 +3,26 @@ using System.Collections;
 
 
 public class PlayerController : MonoBehaviour {
-	
+
 	private float speed = 130F;
 	private float velocityX, velocityY = 0F;
 	private CharacterController characterController;
 	private GameController gameController;
 	private tk2dSpriteAnimator spriteController;
 	private Vector3 moveDirection = Vector3.zero;
-	
+
 	private bool lookRight = true;
 	private bool onLadder = false;
 	private bool onRope = false;
 	private bool isShooting = false;
 	private bool isFalling = false;
-	
+
 	private int ladderTriggerCount, ropeTriggerCount = 0;
-	
+
 	private Transform shootParent;
 	private Renderer shootRenderer;
 	private tk2dSpriteAnimator shootSprite;
-	
+
 	private RaycastHit hit;
 
 	// Use this for initialization
@@ -34,31 +34,39 @@ public class PlayerController : MonoBehaviour {
 		shootRenderer = GameObject.Find("shoot").renderer;
 		shootSprite = GameObject.Find("shoot").GetComponent<tk2dSpriteAnimator>();
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		InputCheck();
 		Move();
 		SetAnimation();
 	}
-	
+
 	void InputCheck () {
-		velocityX = Input.GetAxis("Horizontal");
-		velocityY = Input.GetAxis("Vertical");
+		if (Input.touchCount == 1) {
+	        Touch touch = Input.GetTouch(0);
+	        if (touch.phase == TouchPhase.Moved) {
+	            velocityX = touch.deltaPosition.x;
+	            velocityY = touch.deltaPosition.y;
+	        }
+	    } else {
+	    	velocityX = Input.GetAxis("Horizontal");
+			velocityY = Input.GetAxis("Vertical");
+	    }
 		if (velocityX > 0) {
 			lookRight = true;
 		}
 		if (velocityX < 0) {
 			lookRight = false;
 		}
-		
+
 		// shooting
 		if (Input.GetKeyDown("space") && !onRope && !onLadder) {
 			StartCoroutine(Shoot());
 		}
 	}
-	
-	void UpdateRaycasts() { 
+
+	void UpdateRaycasts() {
 		float correction = 45f;
 		if (!lookRight) {
 			correction = -10f;
@@ -70,7 +78,7 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 	}
-	
+
 	void Move () {
 		if (!isShooting) {
 			if (onLadder) {
@@ -80,7 +88,7 @@ public class PlayerController : MonoBehaviour {
 				moveDirection = new Vector3(velocityX, 0f, 0f);
 				moveDirection *= Time.deltaTime * speed;
 				if (velocityY < 0) {
-					onRope = false;	
+					onRope = false;
 				}
 			} else {
 				if (!characterController.isGrounded) {
@@ -94,7 +102,7 @@ public class PlayerController : MonoBehaviour {
 			characterController.Move(moveDirection);
 		}
 	}
-	
+
 	void SetAnimation () {
 		if (onLadder) {
 			if (velocityY != 0) {
@@ -141,9 +149,9 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 	}
-	
+
 	void OnTriggerEnter(Collider other)
-	{	
+	{
 		if(other.gameObject.CompareTag("ladder"))
 		{
 			ladderTriggerCount++;
@@ -157,21 +165,21 @@ public class PlayerController : MonoBehaviour {
 		if(other.gameObject.CompareTag("pickup"))
 		{
 			gameController.SendMessage("PickedUp", SendMessageOptions.DontRequireReceiver);
-			other.gameObject.renderer.enabled = false;	
+			other.gameObject.renderer.enabled = false;
 		}
 
 	}
-	
+
 	void OnTriggerExit(Collider other)
 	{
-		if (other.gameObject.CompareTag("ladder")) 
+		if (other.gameObject.CompareTag("ladder"))
 		{
 			ladderTriggerCount--;
 			if (ladderTriggerCount <= 0) {
 				onLadder = false;
 			}
 		}
-		if (other.gameObject.CompareTag("rope")) 
+		if (other.gameObject.CompareTag("rope"))
 		{
 			ropeTriggerCount--;
 			if (ropeTriggerCount <= 0) {
@@ -179,13 +187,13 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 	}
-	
+
 	IEnumerator Shoot()
-	{	
+	{
 		isShooting = true;
 		shootRenderer.enabled = true;
 		shootSprite.Play("shoot");
-		
+
 		// check facing direction and flip the shoot parent to the correct side
 		if (lookRight) {
 			shootParent.localPosition = new Vector3(30, 0, 0);
@@ -194,7 +202,7 @@ public class PlayerController : MonoBehaviour {
 			shootParent.localPosition = new Vector3(0, 0, 0);
 			shootParent.localScale = new Vector3(1, 1,1); // left side
 		}
-		
+
 		yield return new WaitForSeconds(0.35f);
 		UpdateRaycasts();
 		yield return new WaitForSeconds(0.15f);

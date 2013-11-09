@@ -2,47 +2,33 @@
 using System.Collections;
 
 
-public class PlayerController : MonoBehaviour {
-
-	private float speed = 130F;
-	private float velocityX, velocityY = 0F;
-	private CharacterController characterController;
+public class PlayerController : PersonBehaviour {
+	
 	private GameController gameController;
-	private tk2dSpriteAnimator spriteController;
-	private Vector3 moveDirection = Vector3.zero;
-
-	private bool lookRight = true;
-	private bool onLadder = false;
-	private bool onRope = false;
-	private bool isShooting = false;
-	private bool isFalling = false;
-
-	private int ladderTriggerCount, ropeTriggerCount = 0;
-
+	private CharacterController characterController;
+	
 	private Transform shootParent;
 	private Renderer shootRenderer;
 	private tk2dSpriteAnimator shootSprite;
 
-	private RaycastHit hit;
-
-	// Use this for initialization
-	void Start () {
+	public override void Start () {
+		base.Start();
+		
 		gameController = GameObject.Find("GameController").GetComponent<GameController>();
 		characterController = GetComponent<CharacterController>();
-		spriteController = GetComponent<tk2dSpriteAnimator>();
+		
 		shootParent = transform.Find("shoot parent");
 		shootRenderer = GameObject.Find("shoot").renderer;
 		shootSprite = GameObject.Find("shoot").GetComponent<tk2dSpriteAnimator>();
 	}
 
-	// Update is called once per frame
 	void Update () {
 		InputCheck();
 		Move();
-		SetAnimation();
+		base.SetAnimation();
 	}
 
-	void InputCheck () {
+	void InputCheck() {
 		if (Input.touchCount == 1) {
 	        Touch touch = Input.GetTouch(0);
 	        if (touch.phase == TouchPhase.Moved) {
@@ -60,12 +46,31 @@ public class PlayerController : MonoBehaviour {
 			lookRight = false;
 		}
 
-		// shooting
 		if (Input.GetKeyDown("space") && !onRope && !onLadder) {
 			StartCoroutine(Shoot());
 		}
 	}
-
+	
+	void Move() {
+		if (!isShooting) {
+			if (!characterController.isGrounded) {
+				isFalling = true;
+			} else {
+				isFalling = false;
+			}
+			characterController.Move(GetMoveDirection(velocityX, velocityY));
+		}
+	}
+	
+	public override void OnTriggerEnter(Collider other) {
+		base.OnTriggerEnter(other);
+		if(other.gameObject.CompareTag("pickup"))
+		{
+			gameController.SendMessage("PickedUp", SendMessageOptions.DontRequireReceiver);
+			other.gameObject.renderer.enabled = false;
+		}	
+	}
+	
 	void UpdateRaycasts() {
 		float correction = 45f;
 		if (!lookRight) {
@@ -75,115 +80,6 @@ public class PlayerController : MonoBehaviour {
 		if (Physics.Raycast(higherMe, Vector3.down, out hit, 30.0F)) {
 			if (hit.transform.tag == "brick") {
 				hit.transform.SendMessage("Break", SendMessageOptions.DontRequireReceiver);
-			}
-		}
-	}
-
-	void Move () {
-		if (!isShooting) {
-			if (onLadder) {
-				moveDirection = new Vector3(velocityX, velocityY, 0f);
-				moveDirection *= Time.deltaTime * speed;
-			} else if (onRope) {
-				moveDirection = new Vector3(velocityX, 0f, 0f);
-				moveDirection *= Time.deltaTime * speed;
-				if (velocityY < 0) {
-					onRope = false;
-				}
-			} else {
-				if (!characterController.isGrounded) {
-					isFalling = true;
-				} else {
-					isFalling = false;
-				}
-				moveDirection = new Vector3(velocityX, -1.5f, 0f);
-				moveDirection *= Time.deltaTime * speed;
-			}
-			characterController.Move(moveDirection);
-		}
-	}
-
-	void SetAnimation () {
-		if (onLadder) {
-			if (velocityY != 0) {
-				if (spriteController.IsPlaying("climb")) {
-					spriteController.Resume();
-				} else {
-					spriteController.Play("climb");
-				}
-			} else {
-				if (!spriteController.IsPlaying("climb")) {
-					spriteController.Play("climb");
-				}
-				spriteController.Stop();
-			}
-		} else if (onRope) {
-			if (velocityX > 0) {
-				spriteController.Play("ropeRight");
-			}
-			if (velocityX < 0) {
-				spriteController.Play("ropeLeft");
-			}
-			if (velocityX == 0) {
-				spriteController.Stop();
-			}
-		} else if (isFalling) {
-			if (lookRight) {
-				spriteController.Play("fallRight");
-			} else {
-				spriteController.Play("fallLeft");
-			}
-		} else {
-			if (velocityX > 0 && !isShooting) {
-				spriteController.Play("walkRight");
-			}
-			if (velocityX < 0 && !isShooting) {
-				spriteController.Play("walkLeft");
-			}
-			if (velocityX == 0 || isShooting) {
-				if (lookRight) {
-					spriteController.Play("stayRight");
-				} else {
-					spriteController.Play("stayLeft");
-				}
-			}
-		}
-	}
-
-	void OnTriggerEnter(Collider other)
-	{
-		if(other.gameObject.CompareTag("ladder"))
-		{
-			ladderTriggerCount++;
-			onLadder = true;
-		}
-		if(other.gameObject.CompareTag("rope"))
-		{
-			ropeTriggerCount++;
-			onRope = true;
-		}
-		if(other.gameObject.CompareTag("pickup"))
-		{
-			gameController.SendMessage("PickedUp", SendMessageOptions.DontRequireReceiver);
-			other.gameObject.renderer.enabled = false;
-		}
-
-	}
-
-	void OnTriggerExit(Collider other)
-	{
-		if (other.gameObject.CompareTag("ladder"))
-		{
-			ladderTriggerCount--;
-			if (ladderTriggerCount <= 0) {
-				onLadder = false;
-			}
-		}
-		if (other.gameObject.CompareTag("rope"))
-		{
-			ropeTriggerCount--;
-			if (ropeTriggerCount <= 0) {
-				onRope = false;
 			}
 		}
 	}

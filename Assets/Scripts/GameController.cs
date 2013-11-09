@@ -9,7 +9,7 @@ public class GameController : MonoBehaviour {
 	public int gridHeight = 30;
 	public int gridSize = 30;
 	
-	public Transform solid, brick, ladder, player, pickup, rope;
+	public Transform solid, brick, ladder, player, pickup, rope, enemy;
 	
 	public int pickups = 0;
 
@@ -60,6 +60,9 @@ public class GameController : MonoBehaviour {
 				break;
 			case 'p':
 				Instantiate(player, new Vector3(x, y, -1), Quaternion.identity);
+				break;
+			case 'e':
+				Instantiate(enemy, new Vector3(x, y, -1), Quaternion.identity);
 				break;
 		}	
 	}

@@ -23,7 +23,7 @@ X           XXXXXXXXXXXXXXXXXXXXXXXXXXXX
 X                                      X
 X             X    #   #  #  #         X
 X             X    #   #  #  #         X
-X  EEE   #XXXX     #####  #  #         X
+X        #XXXX     #####  #  #         X
 X########          #   #  #            X
 X        ooo       #   #  #  #         X
 X######################################X

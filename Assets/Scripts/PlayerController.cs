@@ -34,6 +34,18 @@ public class PlayerController : PersonBehaviour {
 	        if (touch.phase == TouchPhase.Moved) {
 	            velocityX = touch.deltaPosition.x;
 	            velocityY = touch.deltaPosition.y;
+				if (velocityX > 1) {
+					velocityX = 1;
+				}
+				if (velocityX < -1) {
+					velocityX = -1;
+				}
+				if (velocityY > 1) {
+					velocityY = 1;
+				}
+				if (velocityY < -1) {
+					velocityY = -1;
+				}
 	        }
 	    } else {
 	    	velocityX = Input.GetAxis("Horizontal");
@@ -46,7 +58,7 @@ public class PlayerController : PersonBehaviour {
 			lookRight = false;
 		}
 
-		if (Input.GetKeyDown("space") && !onRope && !onLadder) {
+		if ((Input.GetKeyDown("space") || Input.touchCount > 1) && !onRope && !onLadder) {
 			StartCoroutine(Shoot());
 		}
 	}

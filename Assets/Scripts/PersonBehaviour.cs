@@ -3,17 +3,22 @@ using System.Collections;
 
 public class PersonBehaviour : MonoBehaviour {
 	
-	public float speed = 130F;
-	public float velocityX, velocityY = 0F;
+	public float gravity = 1f;
+	public float speed = 130f;
+	public float velocityX, velocityY = 0f;
 	
 	public tk2dSpriteAnimator spriteController;
 	public Vector3 moveDirection = Vector3.zero;
+	public Vector3 currentPosition, lastPosition;
 	
 	public bool lookRight = true;
 	public bool onLadder = false;
 	public bool onRope = false;
 	public bool isFalling = false;
 	public bool isShooting = false;
+	public bool isGrounded = false;
+	public bool isMovingDown = false;
+	public bool isMovingUp = false;
 	
 	public int ladderTriggerCount, ropeTriggerCount = 0;
 	
@@ -22,21 +27,27 @@ public class PersonBehaviour : MonoBehaviour {
 	public virtual void Start() {
 		spriteController = GetComponent<tk2dSpriteAnimator>();
 	}
+	
+	public virtual void LateUpdate() {
+		lastPosition = currentPosition;
+	}
 		
 	public virtual Vector3 GetMoveDirection(float x, float y) {
 		if (onLadder) {
 			moveDirection = new Vector3(x, y, 0f);
-			moveDirection *= Time.deltaTime * speed;
 		} else if (onRope) {
 			moveDirection = new Vector3(x, 0f, 0f);
-			moveDirection *= Time.deltaTime * speed;
 			if (y < 0) {
 				onRope = false;
 			}
 		} else {
-			moveDirection = new Vector3(x, -1.5f, 0f);
-			moveDirection *= Time.deltaTime * speed;
+			if (isFalling) {
+				moveDirection = new Vector3(0f, -1f * gravity, 0f);
+			} else {
+				moveDirection = new Vector3(x, -1f * gravity, 0f);
+			}
 		}
+		moveDirection *= Time.deltaTime * speed;
 		return moveDirection;
 	}
 	
@@ -48,11 +59,6 @@ public class PersonBehaviour : MonoBehaviour {
 				} else {
 					spriteController.Play("climb");
 				}
-			} else {
-				if (!spriteController.IsPlaying("climb")) {
-					spriteController.Play("climb");
-				}
-				spriteController.Stop();
 			}
 		} else if (onRope) {
 			if (velocityX > 0) {

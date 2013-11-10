@@ -10,6 +10,8 @@ public class PlayerController : PersonBehaviour {
 	private Transform shootParent;
 	private Renderer shootRenderer;
 	private tk2dSpriteAnimator shootSprite;
+	
+	private float playerHitboxY, playerHitboxX = 30f;
 
 	public override void Start () {
 		base.Start();
@@ -22,7 +24,16 @@ public class PlayerController : PersonBehaviour {
 		shootSprite = GameObject.Find("shoot").GetComponent<tk2dSpriteAnimator>();
 	}
 
-	void Update () {
+	public void Update ()
+	{	
+		currentPosition = transform.position;
+		
+		if (currentPosition.y < lastPosition.y) {
+			isFalling = true;
+		} else {
+			isFalling = false;	
+		}
+		
 		InputCheck();
 		Move();
 		base.SetAnimation();
@@ -34,28 +45,44 @@ public class PlayerController : PersonBehaviour {
 	        if (touch.phase == TouchPhase.Moved) {
 	            velocityX = touch.deltaPosition.x;
 	            velocityY = touch.deltaPosition.y;
-				if (velocityX > 1) {
-					velocityX = 1;
-				}
-				if (velocityX < -1) {
-					velocityX = -1;
-				}
-				if (velocityY > 1) {
-					velocityY = 1;
-				}
-				if (velocityY < -1) {
-					velocityY = -1;
-				}
 	        }
 	    } else {
-	    	velocityX = Input.GetAxis("Horizontal");
-			velocityY = Input.GetAxis("Vertical");
+	    	velocityX = Input.GetAxisRaw("Horizontal");
+			velocityY = Input.GetAxisRaw("Vertical");
 	    }
+		
+		if (velocityX > 0) {
+			velocityX = 1;
+		}
+		if (velocityX < 0) {
+			velocityX = -1;
+		}
+		if (velocityY > 0) {
+			velocityY = 1;
+			isMovingDown = false;
+			isMovingUp = true;
+		}
+		if (velocityY < 0) {
+			velocityY = -1;
+			isMovingDown = true;
+			isMovingUp = false;
+		}
+		if (velocityY == 0) {
+			isMovingDown = false;
+			isMovingUp = false;
+		}
+		
 		if (velocityX > 0) {
 			lookRight = true;
 		}
 		if (velocityX < 0) {
 			lookRight = false;
+		}
+		
+		if (characterController.isGrounded) {
+			isGrounded = true;
+		} else {
+			isGrounded = false;
 		}
 
 		if ((Input.GetKeyDown("space") || Input.touchCount > 1) && !onRope && !onLadder) {
@@ -65,11 +92,6 @@ public class PlayerController : PersonBehaviour {
 	
 	void Move() {
 		if (!isShooting) {
-			if (!characterController.isGrounded) {
-				isFalling = true;
-			} else {
-				isFalling = false;
-			}
 			characterController.Move(GetMoveDirection(velocityX, velocityY));
 		}
 	}
@@ -94,7 +116,7 @@ public class PlayerController : PersonBehaviour {
 				hit.transform.SendMessage("Break", SendMessageOptions.DontRequireReceiver);
 			}
 		}
-	}
+	}	
 
 	IEnumerator Shoot()
 	{

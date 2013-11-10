@@ -20,20 +20,12 @@ public class PlayerController : PersonBehaviour {
 		characterController = GetComponent<CharacterController>();
 		
 		shootParent = transform.Find("shoot parent");
-		shootRenderer = GameObject.Find("shoot").renderer;
-		shootSprite = GameObject.Find("shoot").GetComponent<tk2dSpriteAnimator>();
+		shootRenderer = shootParent.Find("shoot").renderer;
+		shootSprite = shootParent.Find("shoot").GetComponent<tk2dSpriteAnimator>();
 	}
 
-	public void Update ()
-	{	
-		currentPosition = transform.position;
-		
-		if (currentPosition.y < lastPosition.y) {
-			isFalling = true;
-		} else {
-			isFalling = false;	
-		}
-		
+	public void Update () {	
+		base.Update();
 		InputCheck();
 		Move();
 		base.SetAnimation();
@@ -85,7 +77,7 @@ public class PlayerController : PersonBehaviour {
 			isGrounded = false;
 		}
 
-		if ((Input.GetKeyDown("space") || Input.touchCount > 1) && !onRope && !onLadder) {
+		if ((Input.GetKeyDown("space") || Input.touchCount > 1) && !onRope && !onLadder && !isFalling) {
 			StartCoroutine(Shoot());
 		}
 	}

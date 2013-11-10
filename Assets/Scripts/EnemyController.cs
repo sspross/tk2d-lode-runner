@@ -8,21 +8,17 @@ public class EnemyController : PersonBehaviour {
 	}
 	
 	void Update() {
+		base.Update();
 		Move();
 		base.SetAnimation();
 	}
 	
-	bool IsGrounded() {
-  		return Physics.Raycast(transform.position, -Vector3.up, 1f);
-	}
-	
 	void Move() {
-		if (!IsGrounded()) {
-			isFalling = true;
-		} else {
-			isFalling = false;
-		}
-		rigidbody.velocity = GetMoveDirection(1f, 0f);
+		velocityX = 1f;
+		velocityY = 0f;
+		Vector3 moveDirection = GetMoveDirection(velocityX, velocityY);
+		Vector3 newPosition = new Vector3(rigidbody.position.x + moveDirection.x, rigidbody.position.y + moveDirection.y, rigidbody.position.z + moveDirection.z);
+		rigidbody.MovePosition(newPosition);
 	}
 	
 }

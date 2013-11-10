@@ -1,0 +1,30 @@
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+X  P   o #  X    o             ----H   X
+X#########  X  ######H######   ##  H   X
+X           X        H      -------H   X
+X           X        H       P       XHX
+X  H########X########################XHX
+X  HXXXXXXXXX              ##########XHX
+X  H        X              ##########XHX
+X  H        XX#####XXXXXXXX####oooooooHX
+X  H            ------    X###########HX
+X  H                  #H  X           HX
+X  H                   H  X           HX
+XXXXXXXXXXX##XXXXXX    H  X           HX
+X      o   ##   o      H  X           HX
+X  XXXXXXXXXXXXXXX     H  X           HX
+X                      H  X           HX
+X                      H  X           HX
+XXXXXXXXXX#######XXXXXXXXXX           HX
+X                                     HX
+X                                     HX
+X                                     HX
+X           XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+X                                      X
+X             X    #   #  #  #         X
+X             X    #   #  #  #         X
+X        #XXXX     #####  #  #         X
+X########          #   #  #            X
+X        ooo       #   #  #  #         X
+X######################################X
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

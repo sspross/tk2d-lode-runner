@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PersonBehaviour : MonoBehaviour {
 	
-	public float gravity = 1f;
+	public float gravity = 1.5f;
 	public float speed = 130f;
 	public float velocityX, velocityY = 0f;
 	
@@ -25,19 +25,39 @@ public class PersonBehaviour : MonoBehaviour {
 	public RaycastHit hit;
 
 	public virtual void Start() {
+		// get self sprite controller
 		spriteController = GetComponent<tk2dSpriteAnimator>();
 	}
 	
+	public virtual void Update() {
+		// evaluate if person is falling
+		currentPosition = transform.position;
+		if (currentPosition.y < lastPosition.y && !onLadder) {
+			isFalling = true;
+		} else {
+			isFalling = false;	
+		}
+	}
+	
 	public virtual void LateUpdate() {
+		// save last position to support falling evaluation
 		lastPosition = currentPosition;
 	}
 		
 	public virtual Vector3 GetMoveDirection(float x, float y) {
 		if (onLadder) {
-			moveDirection = new Vector3(x, y, 0f);
+			if (isMovingUp || isMovingDown) {
+				// if on ladder and moving vertical, fix horizontal
+				moveDirection = new Vector3(0f, y, 0f);
+			} else {
+				// if on ladder and not moving vertical, release horizontal too
+				moveDirection = new Vector3(x, y, 0f);	
+			}
 		} else if (onRope) {
+			// if on rope, fix vertical
 			moveDirection = new Vector3(x, 0f, 0f);
-			if (y < 0) {
+			if (isMovingDown) {
+				// exit rope if moving down
 				onRope = false;
 			}
 		} else {
@@ -52,7 +72,7 @@ public class PersonBehaviour : MonoBehaviour {
 	}
 	
 	public virtual void SetAnimation() {
-		if (onLadder) {
+		if (onLadder && (isMovingUp || isMovingDown)) {
 			if (velocityY != 0) {
 				if (spriteController.IsPlaying("climb")) {
 					spriteController.Resume();
@@ -90,6 +110,23 @@ public class PersonBehaviour : MonoBehaviour {
 					spriteController.Play("stayLeft");
 				}
 			}
+		}
+	}
+	
+	public virtual void OnTriggerStay(Collider other) {
+		if(other.gameObject.CompareTag("ladder"))
+		{
+			if (isMovingUp || isMovingDown) {
+				// snap on ladder
+				Vector3 position = new Vector3(other.gameObject.transform.position.x - 4f, transform.position.y, transform.position.z);
+				transform.position = position;
+			}
+		}
+		if(other.gameObject.CompareTag("rope"))
+		{
+			// snap on rope
+			Vector3 position = new Vector3(transform.position.x, other.gameObject.transform.position.y, transform.position.z);
+			transform.position = position;
 		}
 	}
 

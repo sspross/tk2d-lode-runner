@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour {
 
 	void Start () {
     	try {
-            using (StreamReader sr = new StreamReader(Application.dataPath + "/Levels/" + "egli01.txt")) {
+            using (StreamReader sr = new StreamReader(Application.dataPath + "/Levels/" + "01.txt")) {
                 string line;
 				int gridY = gridHeight-1;
 				

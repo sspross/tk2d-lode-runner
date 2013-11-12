@@ -32,7 +32,7 @@ public class PersonBehaviour : MonoBehaviour {
 	public virtual void Update() {
 		// evaluate if person is falling
 		currentPosition = transform.position;
-		if (currentPosition.y < lastPosition.y && !onLadder) {
+		if (currentPosition.y < lastPosition.y && !isGrounded && !onLadder) {
 			isFalling = true;
 		} else {
 			isFalling = false;	
